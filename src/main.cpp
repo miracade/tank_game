@@ -7,9 +7,16 @@
 
 int main() {
   print_zigzag("hoppo bounce!!");
-  IO io;
   while (true) {
     io.Update();
-    io.Wait();
+    if (io.IsKeyJustPressed(Key::kQuit)) {
+      break;
+    }
+    for (int y = 0; y < io.kScreenSize.y; ++y) {
+      for (int x = 0; x < io.kScreenSize.x; ++x) {
+        io.DrawPixel({x, y}, {x, 255, y});
+      }
+    }
+    io.RenderAndWait();
   }
 }

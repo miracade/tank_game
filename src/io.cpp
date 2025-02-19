@@ -61,6 +61,8 @@ void IO::Update() {
             break;
           case SDLK_Q:
             pressed_keys_[static_cast<size_t>(Key::kQuit)] = event.key.down;
+            std::clog << "Quit" << std::endl;
+            std::terminate();
             break;
           default:
             break;

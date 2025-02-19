@@ -64,6 +64,21 @@ void IO::Update() {
             std::clog << "Quit" << std::endl;
             std::terminate();
             break;
+          case SDLK_Z:
+            pressed_keys_[static_cast<size_t>(Key::kConfirm)] = event.key.down;
+            break;
+          case SDLK_X:
+            pressed_keys_[static_cast<size_t>(Key::kExit)] = event.key.down;
+            break;
+          case SDLK_A:
+            pressed_keys_[static_cast<size_t>(Key::kCancel)] = event.key.down;
+            break;
+          case SDLK_C:
+            pressed_keys_[static_cast<size_t>(Key::kMine)] = event.key.down;
+            break;
+          case SDLK_V:
+            pressed_keys_[static_cast<size_t>(Key::kUse)] = event.key.down;
+            break;
           default:
             break;
         }

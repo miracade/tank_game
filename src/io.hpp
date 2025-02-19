@@ -10,7 +10,12 @@ enum class Key {
   kLeft,
   kRight,
   kQuit,
-  kCount,
+  kConfirm,
+  kExit,
+  kCancel,
+  kMine,
+  kUse,
+  kCount
 };
 
 class IO {

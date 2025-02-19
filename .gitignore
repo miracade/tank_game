@@ -1,3 +1,2 @@
-build/.cmake
-build/CMakeFiles
-build/CMakeCache.txt
+build/
+!build/SDL3.dll

@@ -11,7 +11,6 @@ enum class Key {
   kRight,
   kQuit,
   kConfirm,
-  kExit,
   kCancel,
   kMine,
   kUse,

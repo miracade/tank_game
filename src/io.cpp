@@ -68,9 +68,6 @@ void IO::Update() {
             pressed_keys_[static_cast<size_t>(Key::kConfirm)] = event.key.down;
             break;
           case SDLK_X:
-            pressed_keys_[static_cast<size_t>(Key::kExit)] = event.key.down;
-            break;
-          case SDLK_A:
             pressed_keys_[static_cast<size_t>(Key::kCancel)] = event.key.down;
             break;
           case SDLK_C:

@@ -20,10 +20,19 @@ enum class Key {
 class IO {
  public:
   IO();
+
   void Update();
-  void Wait();
+  void WaitUntilNextFrame();
+
+  bool IsKeyHeld(Key key) const;
+  bool IsKeyJustPressed(Key key) const;
+  bool IsKeyJustReleased(Key key) const;
+
+  bool IsAnyKeyPressed() const;
+
   ~IO();
 
  private:
   std::array<bool, ToUnderlying(Key::kCount)> pressed_keys_ = {};
+  std::array<bool, ToUnderlying(Key::kCount)> pressed_keys_last_frame_ = {};
 };

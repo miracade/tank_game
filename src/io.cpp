@@ -1,5 +1,6 @@
 #include "io.hpp"
 
+#include <algorithm>
 #include <iostream>
 
 #include "util.hpp"
@@ -37,6 +38,8 @@ IO::IO() {
 }
 
 void IO::Update() {
+  std::ranges::copy(pressed_keys_, pressed_keys_last_frame_.begin());
+
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
@@ -48,51 +51,68 @@ void IO::Update() {
       case SDL_EVENT_KEY_UP:
         switch (event.key.key) {
           case SDLK_UP:
-            pressed_keys_[static_cast<size_t>(Key::kUp)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kUp)] = event.key.down;
             break;
           case SDLK_DOWN:
-            pressed_keys_[static_cast<size_t>(Key::kDown)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kDown)] = event.key.down;
             break;
           case SDLK_LEFT:
-            pressed_keys_[static_cast<size_t>(Key::kLeft)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kLeft)] = event.key.down;
             break;
           case SDLK_RIGHT:
-            pressed_keys_[static_cast<size_t>(Key::kRight)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kRight)] = event.key.down;
             break;
           case SDLK_Q:
-            pressed_keys_[static_cast<size_t>(Key::kQuit)] = event.key.down;
-            std::clog << "Quit" << std::endl;
-            std::terminate();
+            pressed_keys_[ToUnderlying(Key::kQuit)] = event.key.down;
             break;
           case SDLK_Z:
-            pressed_keys_[static_cast<size_t>(Key::kConfirm)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kConfirm)] = event.key.down;
             break;
           case SDLK_X:
-            pressed_keys_[static_cast<size_t>(Key::kCancel)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kCancel)] = event.key.down;
             break;
           case SDLK_C:
-            pressed_keys_[static_cast<size_t>(Key::kMine)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kMine)] = event.key.down;
             break;
           case SDLK_V:
-            pressed_keys_[static_cast<size_t>(Key::kUse)] = event.key.down;
+            pressed_keys_[ToUnderlying(Key::kUse)] = event.key.down;
             break;
           default:
             break;
         }
     }
   }
-  std::clog << "Update" << std::endl;
-  for (bool key : pressed_keys_) {
-    std::clog << key << " ";
+
+  if (IsAnyKeyPressed()) {
+    std::clog << "Update" << std::endl;
+    for (bool key : pressed_keys_) {
+      std::clog << key << " ";
+    }
+    std::clog << std::endl;
   }
-  std::clog << std::endl;
 }
 
-void IO::Wait() {
+void IO::WaitUntilNextFrame() {
   static auto last_frame_time = std::chrono::high_resolution_clock::now();
   std::this_thread::sleep_until(last_frame_time +
-                                std::chrono::microseconds(500'000));
+                                std::chrono::microseconds(16'600));
   last_frame_time = std::chrono::high_resolution_clock::now();
+}
+
+bool IO::IsKeyHeld(Key key) const { return pressed_keys_[ToUnderlying(key)]; }
+
+bool IO::IsKeyJustPressed(Key key) const {
+  return pressed_keys_[ToUnderlying(key)] &&
+         !pressed_keys_last_frame_[ToUnderlying(key)];
+}
+
+bool IO::IsKeyJustReleased(Key key) const {
+  return !pressed_keys_[ToUnderlying(key)] &&
+         pressed_keys_last_frame_[ToUnderlying(key)];
+}
+
+bool IO::IsAnyKeyPressed() const {
+  return std::ranges::any_of(pressed_keys_, [](bool key) { return key; });
 }
 
 IO::~IO() {

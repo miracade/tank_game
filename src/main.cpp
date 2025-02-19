@@ -10,6 +10,9 @@ int main() {
   IO io;
   while (true) {
     io.Update();
-    io.Wait();
+    if (io.IsKeyJustPressed(Key::kQuit)) {
+      break;
+    }
+    io.WaitUntilNextFrame();
   }
 }

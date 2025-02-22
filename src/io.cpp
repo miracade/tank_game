@@ -169,6 +169,19 @@ void IO::DrawPixel(Vec2i xy, Rgbx px) {
   screen_buffer[xy.y * kScreenSize.x + xy.x] = px;
 }
 
+void IO::DrawSprite(Vec2i xy, const Sprites::Sprite& spr) {
+  for (int y = 0; y < spr.size.y; ++y) {
+    for (int x = 0; x < spr.size.x; ++x) {
+      if (spr.data[(y * spr.size.x + x) * 4] == 0) {
+        continue;
+      }
+      DrawPixel({xy.x + x, xy.y + y}, {spr.data[(y * spr.size.x + x) * 4 + 3],
+                                       spr.data[(y * spr.size.x + x) * 4 + 2],
+                                       spr.data[(y * spr.size.x + x) * 4 + 1]});
+    }
+  }
+}
+
 uint32_t IO::Random() const {
   static std::mt19937 rng;
   return rng();

@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 
+#include "sprites.hpp"
 #include "util.hpp"
 
 enum class Key {
@@ -46,6 +47,7 @@ class IO {
 
   // drawing functions
   void DrawPixel(Vec2i xy, Rgbx px);
+  void DrawSprite(Vec2i xy, const Sprites::Sprite& spr);
 
   uint32_t Random() const;
 

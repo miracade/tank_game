@@ -37,7 +37,7 @@ class IO {
   IO();
 
   void Update();
-  void RenderAndWait();
+  void FinishFrame();
 
   // input functions
   bool IsKeyHeld(Key key) const;

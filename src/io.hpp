@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 
+#include "sprites.hpp"
 #include "util.hpp"
 
 enum class Key {
@@ -46,7 +47,11 @@ class IO {
 
   // drawing functions
   void DrawPixel(Vec2i xy, Rgbx px);
+  void DrawSprite(Vec2i xy, const Sprites::Sprite& spr);
+  void Fill(Rgbx px);
 
+  // utility functions
+  int GetFrameNumber() const;
   uint32_t Random() const;
 
   ~IO();
@@ -54,6 +59,8 @@ class IO {
  private:
   std::array<bool, ToUnderlying(Key::kCount)> pressed_keys_ = {};
   std::array<bool, ToUnderlying(Key::kCount)> pressed_keys_last_frame_ = {};
+
+  int frame_number_ = 0;
 };
 
 inline IO io;

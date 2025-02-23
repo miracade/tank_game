@@ -1,8 +1,8 @@
-
 #include <iostream>
 #include <thread>
 
 #include "io.hpp"
+#include "sprites.hpp"
 #include "util.hpp"
 
 int main() {
@@ -12,11 +12,11 @@ int main() {
     if (io.IsKeyJustPressed(Key::kQuit)) {
       break;
     }
-    for (int y = 0; y < io.kScreenSize.y; ++y) {
-      for (int x = 0; x < io.kScreenSize.x; ++x) {
-        io.DrawPixel({x, y}, {x, 255, y});
-      }
-    }
+    io.Fill({0, 0, 64});
+    io.DrawSprite(
+        {static_cast<int>((io.GetFrameNumber() + io.Random() % 32) % 320 - 32),
+         static_cast<int>((io.GetFrameNumber() + io.Random() % 32) % 240 - 32)},
+        Sprites::MiniThinker);
     io.RenderAndWait();
   }
 }

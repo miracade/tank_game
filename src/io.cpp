@@ -122,7 +122,7 @@ void IO::Update() {
   }
 }
 
-void IO::RenderAndWait() {
+void IO::FinishFrame() {
   static constexpr SDL_FRect src{0, 0, kScreenSize.x, kScreenSize.y};
   static constexpr SDL_FRect dst{0, 0, kScreenSize.x * kScreenScale,
                                  kScreenSize.y * kScreenScale};

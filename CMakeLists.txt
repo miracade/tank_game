@@ -10,6 +10,7 @@ set(SOURCE_FILES
 	./src/main.cpp 
 	./src/util.cpp
 	./src/io.cpp
+	./src/sample_scene.cpp
 	)
 
 set(SDL3_DIR "./lib/x86_64-w64-mingw32/lib/cmake/SDL3")

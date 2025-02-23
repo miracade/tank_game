@@ -21,7 +21,7 @@ for infile_name in glob('./img/*'):
 	path = Path(infile_name)
 	img_name = path.stem
 	img = Image.open(infile_name).convert('RGBA')
-	img = img.resize((min(320, img.width), min(240, img.height)), Image.LANCZOS)
+	img = img.resize((min(320, img.width), min(240, img.height)), Image.NEAREST)
 	width, height = img.size
 	arrays.write(f'  constexpr uint8_t {img_name}__data[{width*height*4}] = {{')
 	for r, g, b, a in img.getdata():

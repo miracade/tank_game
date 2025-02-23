@@ -12,13 +12,11 @@ int main() {
     if (io.IsKeyJustPressed(Key::kQuit)) {
       break;
     }
-    for (int y = 0; y < io.kScreenSize.y; ++y) {
-      for (int x = 0; x < io.kScreenSize.x; ++x) {
-        io.DrawPixel({x, y},
-                     {static_cast<uint8_t>(x), 255, static_cast<uint8_t>(y)});
-      }
-    }
-    io.DrawSprite({0, 0}, Sprites::Test2);
+    io.Fill({0, 0, 64});
+    io.DrawSprite(
+        {static_cast<int>((io.GetFrameNumber() + io.Random() % 32) % 320 - 32),
+         static_cast<int>((io.GetFrameNumber() + io.Random() % 32) % 240 - 32)},
+        Sprites::MiniThinker);
     io.RenderAndWait();
   }
 }

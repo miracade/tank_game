@@ -67,6 +67,7 @@ IO::IO() {
 }
 
 void IO::Update() {
+  ++frame_number_;
   std::ranges::copy(pressed_keys_, pressed_keys_last_frame_.begin());
 
   SDL_Event event;
@@ -162,8 +163,6 @@ bool IO::IsAnyKeyPressed() const {
 
 void IO::DrawPixel(Vec2i xy, Rgbx px) {
   if (xy.x < 0 || xy.x >= kScreenSize.x || xy.y < 0 || xy.y >= kScreenSize.y) {
-    std::clog << "DrawPixel out of bounds: " << xy.x << ", " << xy.y
-              << std::endl;
     return;
   }
   screen_buffer[xy.y * kScreenSize.x + xy.x] = px;
@@ -172,7 +171,7 @@ void IO::DrawPixel(Vec2i xy, Rgbx px) {
 void IO::DrawSprite(Vec2i xy, const Sprites::Sprite& spr) {
   for (int y = 0; y < spr.size.y; ++y) {
     for (int x = 0; x < spr.size.x; ++x) {
-      if (spr.data[(y * spr.size.x + x) * 4] == 0) {
+      if (spr.data[(y * spr.size.x + x) * 4] != 255) {
         continue;
       }
       DrawPixel({xy.x + x, xy.y + y}, {spr.data[(y * spr.size.x + x) * 4 + 3],
@@ -181,6 +180,16 @@ void IO::DrawSprite(Vec2i xy, const Sprites::Sprite& spr) {
     }
   }
 }
+
+void IO::Fill(Rgbx px) {
+  for (int y = 0; y < kScreenSize.y; ++y) {
+    for (int x = 0; x < kScreenSize.x; ++x) {
+      DrawPixel({x, y}, px);
+    }
+  }
+}
+
+int IO::GetFrameNumber() const { return frame_number_; }
 
 uint32_t IO::Random() const {
   static std::mt19937 rng;

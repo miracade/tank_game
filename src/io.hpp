@@ -3,6 +3,7 @@
 #include <array>
 #include <cstdint>
 
+#include "persistent.hpp"
 #include "sprites.hpp"
 #include "util.hpp"
 
@@ -55,6 +56,9 @@ class IO {
   uint32_t Random() const;
 
   ~IO();
+
+  // save file
+  PersistentData save_file{"save.json"};
 
  private:
   std::array<bool, ToUnderlying(Key::kCount)> pressed_keys_ = {};

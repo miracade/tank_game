@@ -1,12 +1,12 @@
 #pragma once
 
-#include "scene.hpp"
+#include "base_scene.hpp"
 #include "util.hpp"
 
-class SampleScene : public Scene {
+class SampleScene : public BaseScene {
  public:
   SampleScene() = default;
-  void Update() override;
+  std::unique_ptr<BaseScene> Update() override;
   void Render() override;
   ~SampleScene() noexcept override = default;
 

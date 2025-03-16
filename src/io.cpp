@@ -151,9 +151,10 @@ bool IO::IsAnyKeyPressed() const {
 }
 
 void IO::DrawPixel(Vec2i xy, Rgbx px) {
-  if (xy.x < 0 || xy.x >= kScreenSize.x || xy.y < 0 || xy.y >= kScreenSize.y) {
-    return;
-  }
+  // if (xy.x < 0 || xy.x >= kScreenSize.x || xy.y < 0 || xy.y >= kScreenSize.y)
+  // {
+  //   return;
+  // }
   screen_buffer[xy.y * kScreenSize.x + xy.x] = px;
 }
 

@@ -3,7 +3,7 @@
 #include "io.hpp"
 #include "sprites.hpp"
 
-void SampleScene::Update() {
+std::unique_ptr<BaseScene> SampleScene::Update() {
   ++age_;
   if (io.IsKeyHeld(Key::kRight)) {
     pos_.x += 1;
@@ -17,6 +17,11 @@ void SampleScene::Update() {
   if (io.IsKeyHeld(Key::kUp)) {
     pos_.y -= 1;
   }
+
+  if (io.IsKeyJustPressed(Key::kConfirm)) {
+    return std::make_unique<SampleScene>();
+  }
+  return nullptr;
 }
 
 void SampleScene::Render() {

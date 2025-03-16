@@ -1,10 +1,10 @@
 #pragma once
 
 #include <fstream>
+#include <nlohmann/json.hpp>
 #include <string>
 
 #include "io.hpp"
-#include "json.hpp"
 
 class PersistentData {
  public:

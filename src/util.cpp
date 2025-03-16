@@ -18,3 +18,6 @@ void print_zigzag(const std::string& str) {
   }
   std::cout << std::endl;
 }
+
+std::string format_as(const Vec2i& v)
+{ return fmt::format("({}, {})", v.x, v.y); }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 
+#include "logging.hpp"
 #include "util.hpp"
 
 #if NSPIRE == 1
@@ -35,32 +36,26 @@ IO::IO() {
   io_ptr = this;
 
   // initialize SDL
-  std::clog << "SDL version: " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION
-            << "." << SDL_MICRO_VERSION << std::endl;
   if (!SDL_Init(SDL_INIT_VIDEO)) {
-    std::clog << "SDL_Init Error: " << SDL_GetError() << std::endl;
-    throw std::runtime_error("SDL_Init Error");
+    LOG_ERROR("SDL_Init Error: {}", SDL_GetError());
   }
 
   win = SDL_CreateWindow("Tank Game", kScreenSize.x * kScreenScale,
                          kScreenSize.y * kScreenScale, 0);
   if (!win) {
-    std::clog << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
-    throw std::runtime_error("SDL_CreateWindow Error");
+    LOG_ERROR("SDL_CreateWindow Error: {}", SDL_GetError());
   }
 
   rend = SDL_CreateRenderer(win, NULL);
   if (!rend) {
-    std::clog << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
-    throw std::runtime_error("SDL_CreateRenderer Error");
+    LOG_ERROR("SDL_CreateRenderer Error: {}", SDL_GetError());
   }
 
   tex = SDL_CreateTexture(rend, SDL_PIXELFORMAT_RGBX8888,
                           SDL_TEXTUREACCESS_STREAMING, kScreenSize.x,
                           kScreenSize.y);
   if (!tex) {
-    std::clog << "SDL_CreateTexture Error: " << SDL_GetError() << std::endl;
-    throw std::runtime_error("SDL_CreateTexture Error");
+    LOG_ERROR("SDL_CreateTexture Error: {}", SDL_GetError());
   }
   SDL_SetTextureScaleMode(tex, SDL_ScaleMode::SDL_SCALEMODE_NEAREST);
   SDL_LockTexture(tex, NULL, (void**)(&screen_buffer), &pitch);
@@ -74,7 +69,7 @@ void IO::Update() {
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_EVENT_QUIT:
-        std::clog << "Quit" << std::endl;
+        LOG_DEBUG("SDL_QUIT event");
         std::terminate();
         break;
       case SDL_EVENT_KEY_DOWN:
@@ -108,17 +103,10 @@ void IO::Update() {
             pressed_keys_[ToUnderlying(Key::kUse)] = event.key.down;
             break;
           default:
+            LOG_DEBUG("Unknown key: {}", event.key.key);
             break;
         }
     }
-  }
-
-  if (IsAnyKeyPressed()) {
-    std::clog << "Update" << std::endl;
-    for (bool key : pressed_keys_) {
-      std::clog << key << " ";
-    }
-    std::clog << std::endl;
   }
 }
 
@@ -133,16 +121,17 @@ void IO::FinishFrame() {
   SDL_RenderPresent(rend);
   SDL_LockTexture(tex, NULL, (void**)(&screen_buffer), &pitch);
 
-  // wait for next frame (and log frame time)
-  static auto last_frame_time = std::chrono::high_resolution_clock::now();
-  std::clog << "Frame time: "
-            << std::chrono::duration_cast<std::chrono::microseconds>(
-                   std::chrono::high_resolution_clock::now() - last_frame_time)
-                   .count()
-            << " us" << std::endl;
-  std::this_thread::sleep_until(last_frame_time +
-                                std::chrono::microseconds(16'600));
-  last_frame_time = std::chrono::high_resolution_clock::now();
+  using namespace std::chrono;
+
+  // wait for next frame
+  static auto last_frame_time = system_clock::now();
+  if (system_clock::now() - last_frame_time > microseconds(16'600)) {
+    LOG_DEBUG("Frame took too long: {}us",
+              duration_cast<microseconds>(system_clock::now() - last_frame_time)
+                  .count());
+  }
+  std::this_thread::sleep_until(last_frame_time + microseconds(16'600));
+  last_frame_time = system_clock::now();
 }
 
 bool IO::IsKeyHeld(Key key) const { return pressed_keys_[ToUnderlying(key)]; }
@@ -169,14 +158,26 @@ void IO::DrawPixel(Vec2i xy, Rgbx px) {
 }
 
 void IO::DrawSprite(Vec2i xy, const Sprites::Sprite& spr) {
-  for (int y = 0; y < spr.size.y; ++y) {
-    for (int x = 0; x < spr.size.x; ++x) {
-      if (spr.data[(y * spr.size.x + x) * 4] != 255) {
+  DrawPartialSprite(xy, spr, {0, 0}, spr.size);
+}
+
+void IO::DrawPartialSprite(Vec2i dst_topleft, const Sprites::Sprite& spr,
+                           Vec2i src_topleft, Vec2i src_size) {
+  if (src_topleft.x < 0 || src_topleft.x + src_size.x > spr.size.x ||
+      src_topleft.y < 0 || src_topleft.y + src_size.y > spr.size.y) {
+    LOG_ERROR("Refusing to draw tl={} sz={} of sprite {:?} (size={})",
+              src_topleft, src_size, spr.name, spr.size);
+    return;
+  }
+  for (int y = 0; y < src_size.y; ++y) {
+    for (int x = 0; x < src_size.x; ++x) {
+      auto src_y = src_topleft.y + y;
+      auto src_x = src_topleft.x + x;
+      const uint8_t* px = &spr.data[(src_y * spr.size.x + src_x) * 4];
+      if (px[0] != 255) {
         continue;
       }
-      DrawPixel({xy.x + x, xy.y + y}, {spr.data[(y * spr.size.x + x) * 4 + 3],
-                                       spr.data[(y * spr.size.x + x) * 4 + 2],
-                                       spr.data[(y * spr.size.x + x) * 4 + 1]});
+      DrawPixel({dst_topleft.x + x, dst_topleft.y + y}, {px[3], px[2], px[1]});
     }
   }
 }

@@ -3,23 +3,21 @@
 
 #include "base_scene.hpp"
 #include "io.hpp"
+#include "logging.hpp"
 #include "sample_scene.hpp"
 #include "sprites.hpp"
 #include "util.hpp"
+#include "world_scene.hpp"
 
 int main() {
-  std::unique_ptr<BaseScene> scene = std::make_unique<SampleScene>();
-  io.save_file.Set("name", "John Doe");
-  io.save_file.Set("age", 0);
+  LOG_DEBUG("Game started");
+
+  std::unique_ptr<BaseScene> scene = std::make_unique<WorldScene>();
   while (true) {
     io.Update();
     if (io.IsKeyJustPressed(Key::kQuit)) {
       break;
     }
-    if (io.IsKeyJustPressed(Key::kConfirm)) {
-      scene = std::make_unique<SampleScene>();
-    }
-    io.save_file.Set("age", io.save_file.Get<int>("age") + 1);
     auto next_scene = scene->Update();
     scene->Render();
     io.FinishFrame();

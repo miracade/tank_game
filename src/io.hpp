@@ -33,7 +33,7 @@ struct Rgbx {
 class IO {
  public:
   static constexpr Vec2i kScreenSize{320, 240};
-  static constexpr int kScreenScale = 3;
+  static constexpr int kScreenScale = 4;
 
   IO();
 

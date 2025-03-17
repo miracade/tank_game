@@ -172,13 +172,19 @@ void IO::DrawPartialSprite(Vec2i dst_topleft, const Sprites::Sprite& spr,
   }
   for (int y = 0; y < src_size.y; ++y) {
     for (int x = 0; x < src_size.x; ++x) {
-      auto src_y = src_topleft.y + y;
       auto src_x = src_topleft.x + x;
+      auto src_y = src_topleft.y + y;
+      auto dst_x = dst_topleft.x + x;
+      auto dst_y = dst_topleft.y + y;
+      if (dst_x < 0 || dst_x >= kScreenSize.x || dst_y < 0 ||
+          dst_y >= kScreenSize.y) {
+        continue;
+      }
       const uint8_t* px = &spr.data[(src_y * spr.size.x + src_x) * 4];
       if (px[0] != 255) {
         continue;
       }
-      DrawPixel({dst_topleft.x + x, dst_topleft.y + y}, {px[3], px[2], px[1]});
+      DrawPixel({dst_x, dst_y}, {px[3], px[2], px[1]});
     }
   }
 }

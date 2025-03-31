@@ -121,17 +121,15 @@ void IO::FinishFrame() {
   SDL_RenderPresent(rend);
   SDL_LockTexture(tex, NULL, (void**)(&screen_buffer), &pitch);
 
-  using namespace std::chrono;
-
   // wait for next frame
-  static auto last_frame_time = system_clock::now();
-  if (system_clock::now() - last_frame_time > microseconds(16'600)) {
-    LOG_DEBUG("Frame took too long: {}us",
-              duration_cast<microseconds>(system_clock::now() - last_frame_time)
-                  .count());
+  auto dt = std::chrono::system_clock::now() - last_frame_timepoint_;
+  if (dt > kFrameTime) {
+    LOG_DEBUG("Frame took {} ns. Should only take {} ns", dt.count(), kFrameTime.count());
+  } else {
+    // LOG_DEBUG("Frame time utilization: {}%", (dt.count() * 100 / kFrameTime.count()));
+    SDL_DelayNS((kFrameTime - dt).count());
   }
-  std::this_thread::sleep_until(last_frame_time + microseconds(16'600));
-  last_frame_time = system_clock::now();
+  last_frame_timepoint_ = std::chrono::system_clock::now();
 }
 
 bool IO::IsKeyHeld(Key key) const { return pressed_keys_[ToUnderlying(key)]; }

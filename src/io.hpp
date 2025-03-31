@@ -2,6 +2,7 @@
 
 #include <array>
 #include <cstdint>
+#include <chrono>
 
 #include "persistent.hpp"
 #include "sprites.hpp"
@@ -34,6 +35,8 @@ class IO {
  public:
   static constexpr Vec2i kScreenSize{320, 240};
   static constexpr int kScreenScale = 4;
+  static constexpr int kFps = 60;
+  static constexpr auto kFrameTime = std::chrono::nanoseconds{std::chrono::seconds{1}} / kFps;
 
   IO();
 
@@ -75,6 +78,7 @@ class IO {
   std::array<bool, ToUnderlying(Key::kCount)> pressed_keys_last_frame_ = {};
 
   int frame_number_ = 0;
+  std::chrono::system_clock::time_point last_frame_timepoint_ = std::chrono::system_clock::now();
 };
 
 inline IO io;

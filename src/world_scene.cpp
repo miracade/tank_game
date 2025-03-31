@@ -17,25 +17,23 @@ WorldScene::WorldScene() {
 
 std::unique_ptr<BaseScene> WorldScene::Update() {
   ++age_;
-  if (age_ % 40 == 0) {
-    ++camera_pos_.y;
+  if (io.IsKeyHeld(Key::kRight)) {
+    camera_pos_.x += 3;
+  } if (io.IsKeyHeld(Key::kLeft)) {
+    camera_pos_.x -= 3;
+  } if (io.IsKeyHeld(Key::kDown)) {
+    camera_pos_.y += 3;
+  } if (io.IsKeyHeld(Key::kUp)) {
+    camera_pos_.y -= 3;
   }
-  if (camera_pos_.y >= kTileSize.y) {
-    // shift tile up by one row
-    std::rotate(world_.begin(), world_.begin() + kWorldSize.x, world_.end());
-    camera_pos_.y -= kTileSize.y;
-  }
-  if (age_ % 16 == 0) {
-    ++camera_pos_.x;
-  }
-  if (camera_pos_.x >= kTileSize.x) {
-    camera_pos_.x -= kTileSize.x;
-    for (int row = 0; row < kWorldSize.y; ++row) {
-      std::rotate(world_.begin() + row * kWorldSize.x,
-                  world_.begin() + row * kWorldSize.x + 1,
-                  world_.begin() + (row + 1) * kWorldSize.x);
-    }
-  }
+  // if (camera_pos_.x >= kTileSize.x) {
+  //   camera_pos_.x -= kTileSize.x;
+  //   for (int row = 0; row < kWorldSize.y; ++row) {
+  //     std::rotate(world_.begin() + row * kWorldSize.x,
+  //                 world_.begin() + row * kWorldSize.x + 1,
+  //                 world_.begin() + (row + 1) * kWorldSize.x);
+  //   }
+  // }
   return nullptr;
 }
 
@@ -47,14 +45,14 @@ void WorldScene::Render() {
       if (tile.tile_type != TileType::kNone) {
         io.DrawPartialSprite(
             Vec2i{x * kTileSize.x, y * kTileSize.y} - camera_pos_,
-            Sprites::Tankgame,
+            Sprites::Tileset,
             kTileTypeAttributes[tile.tile_type].sprite_offset.mul(kTileSize),
             kTileSize);
       }
       if (tile.loot_type != LootType::kNone) {
         io.DrawPartialSprite(
             Vec2i{x * kTileSize.x, y * kTileSize.y} - camera_pos_,
-            Sprites::Tankgame,
+            Sprites::Tileset,
             kLootTypeAttributes[tile.loot_type].sprite_offset.mul(kTileSize),
             kTileSize);
       }

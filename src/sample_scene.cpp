@@ -30,7 +30,7 @@ void SampleScene::Render() {
   // io.DrawSprite(
   //     {static_cast<int>(age_ % 320 - 32), static_cast<int>(age_ % 240 - 32)},
   //     Sprites::MiniThinker);
-  io.DrawPartialSprite({0, 0}, Sprites::Tankgame, pos_, {32, 32});
-  io.DrawPartialSprite({0, 0}, Sprites::Tankgame, pos_, {64, 64});
+  io.DrawPartialSprite({0, 0}, Sprites::Tileset, pos_, {32, 32});
+  io.DrawPartialSprite({0, 0}, Sprites::Tileset, pos_, {64, 64});
   // io.DrawSprite({16, 128}, Sprites::TankWorkShop);
 }
